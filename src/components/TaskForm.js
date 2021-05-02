@@ -1,17 +1,27 @@
-import React from 'react'
-import {useState} from 'react';
+import React, {useState} from 'react';
+import {Form} from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
+import Button from './UI/Button';
+import { useDispatch } from 'react-redux';
 
 
-function TaskForm({onAdd, showTask}) {
-    const [title, setTitle] = useState("");
-    const [body, setBody] = useState("");
-    const [datetime, setDateTime] = useState("");
-    const [reminder, setReminder] = useState(false);
+function TaskForm({data, action, handleClose, showTask}) {
+    const [id, setId] = useState(data ? data.id: Math.round(Math.random() * 1000))
+    const [title, setTitle] = useState(data ? data.title : "");
+    const [body, setBody] = useState(data ? data.body : "");
+    const [datetime, setDateTime] = useState(data ? data.datetime : "");
+    const [reminder, setReminder] = useState(data ? data.reminder : false);
+    const dispatch = useDispatch()
 
     const handleSubmit = (e) => {
         e.preventDefault()
-
-        onAdd({title, body, datetime, reminder})
+      
+        if (action === "update") {
+          dispatch({type: "UPDATE_TASK", payload: {id, title, body, datetime, reminder}})
+          handleClose();
+        } else {
+          dispatch({type: "ADD_TASK", payload: {id, title, body, datetime, reminder}});
+        }
 
         setTitle("")
         setBody("")
@@ -20,34 +30,48 @@ function TaskForm({onAdd, showTask}) {
     }
 
     return (
-    (showTask ?
-        <form className='add-form' onSubmit={(e) => handleSubmit(e)}>
-        <div className='form-control'>
-            <label>Task</label>
-            <input type="text" value={title} 
-            onChange={(e) => setTitle(e.target.value)}/>
-        </div>
-        <div className='form-control'>
-            <label>Body</label>
-            <textarea type="text" value={body}
-            onChange={(e) => setBody(e.target.value)}>
-            </textarea>
-        </div>
-        <div className='form-control'>
-            <label>Day & Time</label>
-            <input type="datetime-local" value={datetime} 
-            onChange={(e) => setDateTime(e.target.value)}/>
-        </div>
-        <div className='form-control form-control-check'>
-            <label>Set Reminder</label>
-            <input type="checkbox" value={reminder}
-            onChange={(e) => setReminder(e.currentTarget.checked)}/>
-        </div>
+        <>
+            {showTask ?
+                (<>
+                    <Form onSubmit={(e) => handleSubmit(e)}>
+                    <Form.Row>
+                      <Form.Group as={Col}>
+                        <Form.Label>Task</Form.Label>
+                        <Form.Control type="text"
+                        placeholder="Enter Task"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}/>
+                      </Form.Group>
+                  
+                      <Form.Group as={Col}>
+                        <Form.Label>Body</Form.Label>
+                        <Form.Control type="text"
+                        placeholder="Enter text"
+                        value={body}
+                        onChange={(e) => setBody(e.target.value)} />
+                      </Form.Group>
+                    </Form.Row>
 
-        <input type='submit' value='Save Task' className='btn btn-block' />
-        </form> :
-        null
-    )
+                    <Form.Group controlId="formGridAddress1">
+                      <Form.Label>Day & Time</Form.Label>
+                      <Form.Control type="datetime-local"
+                      value={datetime} 
+                      onChange={(e) => setDateTime(e.target.value)}/>
+                    </Form.Group>
+
+                    <Form.Group id="formGridCheckbox">
+                        <Form.Check type="checkbox"
+                        label="Set Reminder"
+                        value={reminder}
+                        onChange={(e) => setReminder(e.currentTarget.checked)}/>
+                    </Form.Group>
+
+                    <Button title={"Save Task"} type="submit" />
+                  </Form> 
+                </>)
+                : null
+            }
+            </>
     )
 }
 
