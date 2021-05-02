@@ -1,7 +1,10 @@
 import propTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import Task from './Task';
 
 function Tasks({ tasks, onDelete, onToggleReminder }) {
+    tasks = useSelector(state => state.tasks)
+
     return (
         <>
         {tasks.length ? tasks.map((task) =>

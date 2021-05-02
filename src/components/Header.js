@@ -1,12 +1,19 @@
 import propTypes from 'prop-types';
-import Button from './Button';
+import Button from './UI/Button';
+import {Row, Col} from 'react-bootstrap'
 
 
 function Header({title, showTaskForm, showTask}) {
     return (
-        <div className="header">
-            <h1>{title}</h1>
-            <Button title={showTask ? "Close": "Add"} clickEvent={showTaskForm}/>
+        <div>
+            <Row>
+                <Col sm={10}>
+                    <h1>{title}</h1>
+                </Col>
+                <Col sm={2}>
+                    <Button title={showTask ? "Close": "Add"} clickEvent={showTaskForm}/>
+                </Col>
+            </Row>
         </div>
     )
 }
